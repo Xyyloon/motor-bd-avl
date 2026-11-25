@@ -1,0 +1,12 @@
+# Archivos compilados de Java
+*.class
+bin/
+out/
+
+# Archivos temporales de atomicidad
+*.tmp
+
+# Configuración local de IDE
+.vscode/
+.idea/
+*.iml

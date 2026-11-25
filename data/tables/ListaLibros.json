@@ -1,0 +1,30 @@
+{
+  "nombre": "libros",
+  "campos": [
+    { "nombre": "id", "tipo": "INT", "esPK": true },
+    { "nombre": "nombre", "tipo": "TEXT", "esPK": false },
+    { "nombre": "precio", "tipo": "INT", "esPK": false }
+  ],
+  "filas": [
+    { "id": 1, "nombre": "Cien años de soledad", "precio": 30 },
+    { "id": 2, "nombre": "La casa de los espíritus", "precio": 25 },
+    { "id": 3, "nombre": "La Sombra del viento", "precio": 20 },
+    { "id": 4, "nombre": "Delirio", "precio": 25 },
+    { "id": 5, "nombre": "Como agua para chocolate", "precio": 30 },
+    { "id": 6, "nombre": "Cumbres borrascosas", "precio": 30 },
+    { "id": 7, "nombre": "1984", "precio": 35 },
+    { "id": 8, "nombre": "Crimen y castigo", "precio": 30 },
+    { "id": 9, "nombre": "Orgullo y prejuicio", "precio": 20 },
+    { "id": 10, "nombre": "El gran Gatsby", "precio": 30 },
+    { "id": 11, "nombre": "Matar a un ruiseñor", "precio": 20 },
+    { "id": 12, "nombre": "El conde de montecristo", "precio": 35 },
+    { "id": 13, "nombre": "Dune", "precio": 30 },
+    { "id": 14, "nombre": "Fahrenheit 451", "precio": 20 },
+    { "id": 15, "nombre": "Un mundo feliz", "precio": 20 },
+    { "id": 16, "nombre": "El señor de los anillos", "precio": 35 },
+    { "id": 17, "nombre": "El resplandor", "precio": 35 },
+    { "id": 18, "nombre": "La chica del tren", "precio": 20 },
+    { "id": 19, "nombre": "El hombre en busca de sentido", "precio": 25 },
+    { "id": 20, "nombre": "Breve historia del tiempo", "precio": 30 }
+  ]
+}
