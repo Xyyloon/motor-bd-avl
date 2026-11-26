@@ -1,0 +1,17 @@
+{
+  "nombre": "autores",
+  "campos": [
+    { "nombre": "id", "tipo": "INT", "esPK": true },
+    { "nombre": "nombre", "tipo": "TEXT", "esPK": false }
+  ],
+  "filas": [
+    { "id": -3, "nombre": "Carlos Ruiz Zafon" },
+    { "id": 1, "nombre": "Gabriel Garcia Marquez" },
+    { "id": 2, "nombre": "Isabel Allende" },
+    { "id": 3, "nombre": "Jorge Luis Borges" },
+    { "id": 4, "nombre": "Julio Cortazar" },
+    { "id": 5, "nombre": "Mario Vargas Llosa" },
+    { "id": 6, "nombre": "Laura Esquivel" },
+    { "id": 7, "nombre": "Carlos Ruiz Zafon" }
+  ]
+}
