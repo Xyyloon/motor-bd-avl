@@ -1,4 +1,11 @@
+package View;
+
 import javax.swing.*;
+
+import Model.Campo;
+import Model.Persistencia;
+import Model.Tabla;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

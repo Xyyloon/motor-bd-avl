@@ -1,4 +1,12 @@
+package View;
+
 import javax.swing.*;
+
+import Model.Campo;
+import Model.Fila;
+import Model.Persistencia;
+import Model.Tabla;
+
 import java.awt.*;
 import java.util.LinkedHashMap;
 import java.util.List;

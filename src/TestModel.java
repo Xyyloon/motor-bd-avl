@@ -1,6 +1,10 @@
 
 import java.util.*;
 
+import Model.Fila;
+import Model.Persistencia;
+import Model.Tabla;
+
 public class TestModel {
     public static void main(String[] args) {
         // 1. Cargar las tablas desde data/tables/

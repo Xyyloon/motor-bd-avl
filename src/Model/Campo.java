@@ -1,3 +1,5 @@
+package Model;
+
 
 public class Campo {
     private String nombre;
