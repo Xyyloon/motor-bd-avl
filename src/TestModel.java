@@ -1,65 +1,161 @@
-
+import Model.*;
 import java.util.*;
 
-import Model.Fila;
-import Model.Persistencia;
-import Model.Tabla;
-
 public class TestModel {
+    private static final Scanner sc = new Scanner(System.in);
+
     public static void main(String[] args) {
-        // 1. Cargar las tablas desde data/tables/
         Map<String, Tabla> tablas = Persistencia.cargarTodas();
-        Tabla libros = tablas.get("libros");
+        System.out.println("=== MOTOR DE BASE DE DATOS AVL (CLI TERMINAL) ===");
 
-        if (libros == null) {
-            System.out.println("No se encontró la tabla 'libros' en data/tables/. Verifica que el archivo esté allí.");
-            return;
+        int opcion = -1;
+        while (opcion != 0) {
+            System.out.println("\n--- MENÚ PRINCIPAL ---");
+            System.out.println("1. Listar tablas disponibles");
+            System.out.println("2. Crear nueva tabla (id INT PK, nombre TEXT)");
+            System.out.println("3. Eliminar tabla");
+            System.out.println("4. SELECT * (mostrar todos los registros)");
+            System.out.println("5. Buscar por clave primaria (PK)");
+            System.out.println("6. Buscar por rango (min .. max)");
+            System.out.println("7. INSERT (insertar registro)");
+            System.out.println("8. UPDATE (actualizar registro)");
+            System.out.println("9. DELETE (eliminar registro)");
+            System.out.println("10. Ver estructura visual del Árbol AVL");
+            System.out.println("0. Salir");
+            System.out.print("Elige una opción: ");
+
+            try {
+                opcion = Integer.parseInt(sc.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Ingresa un número válido.");
+                continue;
+            }
+
+            try {
+                switch (opcion) {
+                    case 1 -> {
+                        tablas = Persistencia.cargarTodas();
+                        if (tablas.isEmpty()) {
+                            System.out.println("No hay tablas en data/tables.");
+                        } else {
+                            tablas.values().forEach(t ->
+                                System.out.println("- " + t.getNombre() + " (" + t.getIndice().obtenerInOrden().size() + " filas)")
+                            );
+                        }
+                    }
+                    case 2 -> {
+                        System.out.print("Nombre de la nueva tabla: ");
+                        String nombre = sc.nextLine().trim();
+                        List<Campo> campos = List.of(
+                            new Campo("id", "INT", true),
+                            new Campo("nombre", "TEXT", false)
+                        );
+                        Tabla nueva = new Tabla(nombre, campos);
+                        Persistencia.guardarTabla(nueva);
+                        tablas.put(nombre, nueva);
+                        System.out.println("Tabla '" + nombre + "' creada y guardada.");
+                    }
+                    case 3 -> {
+                        System.out.print("Nombre de la tabla a eliminar: ");
+                        String nombre = sc.nextLine().trim();
+                        Persistencia.eliminarArchivo(nombre);
+                        tablas.remove(nombre);
+                        System.out.println("Tabla '" + nombre + "' eliminada.");
+                    }
+                    case 4 -> {
+                        Tabla t = seleccionarTabla(tablas);
+                        if (t != null) {
+                            List<Fila> filas = t.getIndice().obtenerInOrden();
+                            if (filas.isEmpty()) System.out.println("(Tabla vacía)");
+                            else filas.forEach(System.out::println);
+                        }
+                    }
+                    case 5 -> {
+                        Tabla t = seleccionarTabla(tablas);
+                        if (t != null) {
+                            System.out.print("Valor de PK a buscar: ");
+                            Comparable pk = t.convertirClavePK(sc.nextLine().trim());
+                            Fila f = t.getIndice().buscar(pk);
+                            System.out.println(f != null ? "Encontrado: " + f : "No existe PK = " + pk);
+                        }
+                    }
+                    case 6 -> {
+                        Tabla t = seleccionarTabla(tablas);
+                        if (t != null) {
+                            System.out.print("PK mínima: ");
+                            Comparable min = t.convertirClavePK(sc.nextLine().trim());
+                            System.out.print("PK máxima: ");
+                            Comparable max = t.convertirClavePK(sc.nextLine().trim());
+                            t.getIndice().buscarRango(min, max).forEach(System.out::println);
+                        }
+                    }
+                    case 7 -> {
+                        Tabla t = seleccionarTabla(tablas);
+                        if (t != null) {
+                            Map<String, Object> valores = pedirValoresCampos(t);
+                            Fila fila = t.construirYValidarFila(valores);
+                            Comparable pk = (Comparable) fila.getValor(t.getCampoPK().getNombre());
+                            t.getIndice().insertar(pk, fila);
+                            Persistencia.guardarTabla(t);
+                            System.out.println("Insertado y guardado: " + fila);
+                        }
+                    }
+                    case 8 -> {
+                        Tabla t = seleccionarTabla(tablas);
+                        if (t != null) {
+                            Map<String, Object> valores = pedirValoresCampos(t);
+                            Fila fila = t.construirYValidarFila(valores);
+                            Comparable pk = (Comparable) fila.getValor(t.getCampoPK().getNombre());
+                            if (t.getIndice().actualizar(pk, fila)) {
+                                Persistencia.guardarTabla(t);
+                                System.out.println("Actualizado y guardado: " + fila);
+                            } else {
+                                System.out.println("No existe PK = " + pk);
+                            }
+                        }
+                    }
+                    case 9 -> {
+                        Tabla t = seleccionarTabla(tablas);
+                        if (t != null) {
+                            System.out.print("Valor de PK a eliminar: ");
+                            Comparable pk = t.convertirClavePK(sc.nextLine().trim());
+                            if (t.getIndice().eliminar(pk)) {
+                                Persistencia.guardarTabla(t);
+                                System.out.println("Eliminado y guardado PK = " + pk);
+                            } else {
+                                System.out.println("No existe PK = " + pk);
+                            }
+                        }
+                    }
+                    case 10 -> {
+                        Tabla t = seleccionarTabla(tablas);
+                        if (t != null) {
+                            System.out.println(t.getIndice().obtenerEstructuraVisual());
+                        }
+                    }
+                    case 0 -> System.out.println("Saliendo del CLI...");
+                    default -> System.out.println("Opción inválida.");
+                }
+            } catch (Exception e) {
+                System.out.println("ERROR: " + e.getMessage());
+            }
         }
+    }
 
-        // 2. Ver el árbol AVL construido con los 20 libros insertados en orden (1..20)
-        // Sin AVL sería una lista de altura 19; con AVL tendrá altura 4 y fe en {-1, 0, 1}
-        System.out.println("=== 1. ÁRBOL AVL RECONSTRUIDO (20 LIBROS) ===");
-        System.out.println(libros.getIndice().obtenerEstructuraVisual());
+    private static Tabla seleccionarTabla(Map<String, Tabla> tablas) {
+        System.out.print("Nombre de la tabla: ");
+        String nombre = sc.nextLine().trim();
+        Tabla t = tablas.get(nombre);
+        if (t == null) System.out.println("No se encontró la tabla '" + nombre + "'.");
+        return t;
+    }
 
-        // 3. Búsqueda exacta por PK (O(log n))
-        System.out.println("=== 2. BUSCAR LIBRO ID = 13 (Dune) ===");
-        System.out.println(libros.getIndice().buscar(13));
-
-        // 4. Búsqueda por rango de IDs [5, 10]
-        System.out.println("\n=== 3. BÚSQUEDA POR RANGO ID [5, 10] ===");
-        libros.getIndice().buscarRango(5, 10).forEach(System.out::println);
-
-        // 5. Insertar nuevo libro (id = 21)
-        System.out.println("\n=== 4. INSERTAR LIBRO ID = 21 ===");
-        Map<String, Object> nuevoLibro = Map.of(
-            "id", 21,
-            "nombre", "Pedro Páramo",
-            "precio", 28
-        );
-        Fila filaNueva = libros.construirYValidarFila(nuevoLibro);
-        libros.getIndice().insertar(21, filaNueva);
-        System.out.println("Insertado: " + libros.getIndice().buscar(21));
-
-        // 6. Actualizar precio de un libro (id = 1 -> precio 45)
-        System.out.println("\n=== 5. ACTUALIZAR LIBRO ID = 1 (precio -> 45) ===");
-        Map<String, Object> libroActualizado = Map.of(
-            "id", 1,
-            "nombre", "Cien años de soledad",
-            "precio", 45
-        );
-        libros.getIndice().actualizar(1, libros.construirYValidarFila(libroActualizado));
-        System.out.println("Actualizado: " + libros.getIndice().buscar(1));
-
-        // 7. Eliminar la raíz actual del árbol (id = 8) y verificar rebalanceo
-        System.out.println("\n=== 6. ELIMINAR RAÍZ (ID = 8) Y REBALANCEAR ===");
-        libros.getIndice().eliminar(8);
-        System.out.println(libros.getIndice().obtenerEstructuraVisual());
-
-        // 8. Recorrido In-Orden completo
-        System.out.println("=== 7. CATÁLOGO COMPLETO ORDENADO POR ID ===");
-        libros.getIndice().obtenerInOrden().forEach(System.out::println);
-
-        // Descomenta la siguiente línea si quieres guardar los cambios en data/tables/libros.json:
-        // Persistencia.guardarTabla(libros);
+    private static Map<String, Object> pedirValoresCampos(Tabla t) {
+        Map<String, Object> mapa = new LinkedHashMap<>();
+        for (Campo c : t.getCampos()) {
+            System.out.print("Valor para '" + c.getNombre() + "' (" + c.getTipo() + "): ");
+            mapa.put(c.getNombre(), sc.nextLine().trim());
+        }
+        return mapa;
     }
 }
