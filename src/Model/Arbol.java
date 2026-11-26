@@ -1,4 +1,3 @@
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,6 +77,34 @@ public class Arbol {
             inOrden(nodo.getDerecho(), lista);
         }
     }
+    // Devuelve todas las filas en PreOrden y PostOrden (útil para depuración o persistencia)
+    public List<Fila> obtenerPreOrden() {
+    List<Fila> lista = new ArrayList<>();
+    preOrdenFilas(raiz, lista);
+    return lista;
+}
+
+private void preOrdenFilas(NodoArbol nodo, List<Fila> lista) {
+    if (nodo != null) {
+        lista.add(nodo.getDato());
+        preOrdenFilas(nodo.getIzquierdo(), lista);
+        preOrdenFilas(nodo.getDerecho(), lista);
+    }
+}
+
+public List<Fila> obtenerPostOrden() {
+    List<Fila> lista = new ArrayList<>();
+    postOrdenFilas(raiz, lista);
+    return lista;
+}
+
+private void postOrdenFilas(NodoArbol nodo, List<Fila> lista) {
+    if (nodo != null) {
+        postOrdenFilas(nodo.getIzquierdo(), lista);
+        postOrdenFilas(nodo.getDerecho(), lista);
+        lista.add(nodo.getDato());
+    }
+}
 
     // Devuelve las claves en PreOrden (útil si necesitan depurar o persistir topología)
     public List<Comparable> obtenerClavesPreOrden() {
